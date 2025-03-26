@@ -7,28 +7,33 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
+            background-color: #f0f2f5;
             text-align: center;
             margin: 0;
             padding: 0;
             direction: rtl;
         }
         .header {
-            background-color: #d10000;
+            background-color: #1877f2; /* لون فيسبوك الأزرق */
             color: white;
-            padding: 15px;
-            font-size: 24px;
+            padding: 20px;
+            font-size: 28px;
             font-weight: bold;
         }
         .container {
-            margin-top: 20px;
+            background-color: white;
+            width: 90%;
+            max-width: 400px;
+            margin: 30px auto;
             padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
         input, select {
-            width: 80%;
-            max-width: 300px;
-            padding: 10px;
-            margin: 5px 0;
+            width: 90%;
+            padding: 12px;
+            margin: 8px 0;
             font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -43,19 +48,31 @@
             margin: 10px;
         }
         .btn {
-            background-color: #d10000;
+            background-color: #1877f2;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 20px;
             font-size: 18px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            width: 90%;
             margin-top: 20px;
-            width: 80%;
-            max-width: 320px;
         }
         .btn:hover {
-            background-color: #a80000;
+            background-color: #1558b0;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #65676b;
+        }
+        .footer a {
+            color: #1877f2;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .footer a:hover {
+            text-decoration: underline;
         }
         .error {
             color: red;
@@ -67,10 +84,10 @@
 </head>
 <body>
 
-    <div class="header">Welcome to PayNow</div>
+    <div class="header">PayNow - إنشاء حساب جديد</div>
 
     <div class="container">
-        <h2>إنشاء حساب جديد</h2>
+        <h2>إنشاء حسابك الآن</h2>
 
         <input type="text" id="first_name" placeholder="الاسم الأول">
         <p class="error" id="error-first_name">يرجى إدخال الاسم الأول</p>
@@ -103,6 +120,12 @@
         <button class="btn" onclick="validateForm()">التالي</button>
     </div>
 
+    <div class="footer">
+        <a href="#">المساعدة والدعم</a> |
+        <a href="#">سياسة الخصوصية</a> |
+        <a href="#">الشروط والأحكام</a>
+    </div>
+
     <script>
         function validateForm() {
             let isValid = true;
@@ -115,10 +138,8 @@
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirm_password").value;
 
-            // إخفاء جميع الأخطاء أولاً
             document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
 
-            // التحقق من الحقول
             if (!firstName) {
                 document.getElementById("error-first_name").style.display = "block";
                 isValid = false;
