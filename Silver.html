@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ايه رايك دي البداية بس🐢</title>
+    <style>
+        /* تعيين الخلفية سوداء مع نجوم */
+        body {
+            background-color: black;
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* تصميم النجوم */
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://i.imgur.com/WFq1bXa.png') repeat;
+            animation: twinkling 2s infinite alternate;
+        }
+
+        @keyframes twinkling {
+            0% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        /* تصميم القمر */
+        .moon {
+            width: 150px;
+            height: 150px;
+            background: url('https://i.imgur.com/JTQ8P2Z.png') no-repeat center;
+            background-size: cover;
+            position: absolute;
+            top: 10%;
+            right: 10%;
+        }
+
+        h1 {
+            font-size: 32px;
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- النجوم -->
+    <div class="stars"></div>
+
+    <!-- القمر -->
+    <div class="moon"></div>
+
+    <!-- العنوان في المنتصف -->
+    <h1>ايه رايك دي البداية بس🐢</h1>
+
+</body>
+</html>
