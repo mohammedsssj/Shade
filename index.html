@@ -11,9 +11,10 @@
             text-align: center;
             margin: 0;
             padding: 0;
+            direction: rtl;
         }
         .header {
-            background-color: #d10000; /* لون أحمر */
+            background-color: #d10000;
             color: white;
             padding: 15px;
             font-size: 24px;
@@ -27,10 +28,13 @@
             width: 80%;
             max-width: 300px;
             padding: 10px;
-            margin: 10px;
+            margin: 5px 0;
             font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
         .radio-group {
             display: flex;
@@ -39,7 +43,7 @@
             margin: 10px;
         }
         .btn {
-            background-color: #d10000; /* لون أحمر */
+            background-color: #d10000;
             color: white;
             padding: 10px 20px;
             font-size: 18px;
@@ -51,63 +55,107 @@
             max-width: 320px;
         }
         .btn:hover {
-            background-color: #a80000; /* لون أحمر غامق عند التمرير */
+            background-color: #a80000;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            display: none;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 
-    <!-- الهيدر -->
     <div class="header">Welcome to PayNow</div>
 
-    <!-- نموذج التسجيل -->
     <div class="container">
         <h2>إنشاء حساب جديد</h2>
 
-        <input type="text" id="first_name" placeholder="الاسم الأول" required><br>
-        <input type="text" id="middle_name" placeholder="الاسم الأوسط"><br>
-        <input type="text" id="last_name" placeholder="الاسم الأخير" required><br>
+        <input type="text" id="first_name" placeholder="الاسم الأول">
+        <p class="error" id="error-first_name">يرجى إدخال الاسم الأول</p>
 
-        <label for="dob">تاريخ الميلاد:</label><br>
-        <input type="date" id="dob" required><br>
+        <input type="text" id="middle_name" placeholder="الاسم الأوسط">
+
+        <input type="text" id="last_name" placeholder="الاسم الأخير">
+        <p class="error" id="error-last_name">يرجى إدخال الاسم الأخير</p>
+
+        <label for="dob">تاريخ الميلاد:</label>
+        <input type="date" id="dob">
+        <p class="error" id="error-dob">يرجى اختيار تاريخ الميلاد</p>
 
         <label>الجنس:</label>
         <div class="radio-group">
             <label><input type="radio" name="gender" value="ذكر"> ذكر</label>
             <label><input type="radio" name="gender" value="أنثى"> أنثى</label>
         </div>
+        <p class="error" id="error-gender">يرجى اختيار الجنس</p>
 
-        <input type="email" id="email" placeholder="البريد الإلكتروني" required><br>
-        <input type="password" id="password" placeholder="كلمة المرور" required><br>
-        <input type="password" id="confirm_password" placeholder="تأكيد كلمة المرور" required><br>
+        <input type="email" id="email" placeholder="البريد الإلكتروني">
+        <p class="error" id="error-email">يرجى إدخال بريد إلكتروني صحيح</p>
 
-        <button class="btn" onclick="goToCamera()">التالي</button>
+        <input type="password" id="password" placeholder="كلمة المرور">
+        <p class="error" id="error-password">يجب أن تحتوي كلمة المرور على 6 أحرف على الأقل</p>
+
+        <input type="password" id="confirm_password" placeholder="تأكيد كلمة المرور">
+        <p class="error" id="error-confirm_password">كلمة المرور غير متطابقة</p>
+
+        <button class="btn" onclick="validateForm()">التالي</button>
     </div>
 
     <script>
-        function goToCamera() {
-            const firstName = document.getElementById("first_name").value;
-            const lastName = document.getElementById("last_name").value;
+        function validateForm() {
+            let isValid = true;
+
+            const firstName = document.getElementById("first_name").value.trim();
+            const lastName = document.getElementById("last_name").value.trim();
             const dob = document.getElementById("dob").value;
             const gender = document.querySelector('input[name="gender"]:checked');
-            const email = document.getElementById("email").value;
+            const email = document.getElementById("email").value.trim();
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirm_password").value;
 
-            // التحقق من أن جميع الحقول ممتلئة
-            if (!firstName || !lastName || !dob || !gender || !email || !password || !confirmPassword) {
-                alert("يرجى ملء جميع الحقول المطلوبة");
-                return;
-            }
+            // إخفاء جميع الأخطاء أولاً
+            document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
 
-            // التحقق من تطابق كلمة المرور
+            // التحقق من الحقول
+            if (!firstName) {
+                document.getElementById("error-first_name").style.display = "block";
+                isValid = false;
+            }
+            if (!lastName) {
+                document.getElementById("error-last_name").style.display = "block";
+                isValid = false;
+            }
+            if (!dob) {
+                document.getElementById("error-dob").style.display = "block";
+                isValid = false;
+            }
+            if (!gender) {
+                document.getElementById("error-gender").style.display = "block";
+                isValid = false;
+            }
+            if (!validateEmail(email)) {
+                document.getElementById("error-email").style.display = "block";
+                isValid = false;
+            }
+            if (password.length < 6) {
+                document.getElementById("error-password").style.display = "block";
+                isValid = false;
+            }
             if (password !== confirmPassword) {
-                alert("كلمة المرور غير متطابقة!");
-                return;
+                document.getElementById("error-confirm_password").style.display = "block";
+                isValid = false;
             }
 
-            // الانتقال إلى صفحة الكاميرا
-            window.location.href = "camera.html";
+            if (isValid) {
+                window.location.href = "camera.html";
+            }
+        }
+
+        function validateEmail(email) {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailPattern.test(email);
         }
     </script>
 
