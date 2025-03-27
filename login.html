@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .container { width: 90%; max-width: 400px; margin: 50px auto; padding: 30px; background-color: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+        .input-field { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        .btn { background-color: #1877f2; color: white; padding: 12px 20px; font-size: 18px; border: none; border-radius: 5px; cursor: pointer; width: 100%; }
+        .btn:hover { background-color: #1558b0; }
+        img { max-width: 100%; height: auto; border: 2px solid #007bff; border-radius: 10px; display: none; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>تسجيل الدخول</h2>
+        <input type="email" id="email" class="input-field" placeholder="البريد الإلكتروني">
+        <input type="password" id="password" class="input-field" placeholder="كلمة المرور">
+        <button class="btn" id="loginButton">تسجيل الدخول</button>
+
+        <h3>الصورة الخاصة بك:</h3>
+        <img id="userImage" alt="لم يتم العثور على صورة">
+    </div>
+
+    <script>
+        document.getElementById("loginButton").addEventListener("click", function() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            if (email === "silversonicv@gmail.com" && password === "silversonic") {
+                const savedImage = localStorage.getItem("userImage");
+                if (savedImage) {
+                    document.getElementById("userImage").src = savedImage;
+                    document.getElementById("userImage").style.display = "block";
+                } else {
+                    alert("⚠️ لم يتم العثور على صورة محفوظة!");
+                }
+            } else {
+                alert("⚠️ بيانات تسجيل الدخول غير صحيحة!");
+            }
+        });
+    </script>
+
+</body>
+</html>
