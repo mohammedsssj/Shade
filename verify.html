@@ -10,53 +10,129 @@
         video, canvas { width: 100%; border-radius: 10px; }
         .btn { background: #1877f2; color: white; padding: 10px; border: none; width: 100%; border-radius: 5px; cursor: pointer; margin-top: 10px; }
         .privacy { font-size: 12px; margin-top: 10px; cursor: pointer; color: gray; text-decoration: underline; }
+        .loading-circle { width: 50px; height: 50px; border: 5px solid #ddd; border-top: 5px solid green; border-radius: 50%; margin: auto; animation: spin 1s linear infinite; display: none; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .hidden { display: none; }
+        .blue-ball { width: 30px; height: 30px; background: blue; border-radius: 50%; position: relative; animation: bounce 0.6s infinite alternate ease-in-out; margin: auto; }
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-30px); } }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div id="step1" class="container">
         <h2>يرجى التقاط صورة واضحة</h2>
         <video id="video" autoplay></video>
-        <canvas id="canvas" style="display:none;"></canvas>
+        <canvas id="canvas" class="hidden"></canvas>
+        <div class="loading-circle" id="loading"></div>
         <button class="btn" onclick="captureImage()">التقاط الصورة</button>
         <p class="privacy" onclick="showSavedImage()">📜 سياسة الخصوصية</p>
     </div>
 
+    <div id="step2" class="container hidden">
+        <h2>✅ تم التأكد</h2>
+        <button class="btn" onclick="goToWelcome()">التالي</button>
+    </div>
+
+    <div id="welcomePage" class="container hidden">
+        <h2>مرحبًا محمد</h2>
+        <p>رقم الحساب: <strong>5432780</strong></p>
+        <p>الرصيد: <strong>23400 دولار أمريكي</strong></p>
+        <button class="btn" onclick="goToWithdraw()">سحب مبلغ مالي</button>
+    </div>
+
+    <div id="withdrawPage" class="container hidden">
+        <h2>اختيار المبلغ المراد سحبه</h2>
+        <input type="number" id="amountInput" placeholder="أدخل المبلغ">
+        <h3>البنك أو الخدمة</h3>
+        <select id="banks"></select>
+        <button class="btn" onclick="processWithdrawal()">سحب المال</button>
+    </div>
+
+    <div id="processingPage" class="container hidden">
+        <div class="blue-ball"></div>
+        <p>⏳ جار التنفيذ...</p>
+    </div>
+
+    <div id="serverErrorPage" class="container hidden">
+        <h2>⚠ السيرفر مزدحم</h2>
+        <p>الرجاء المحاولة لاحقًا</p>
+        <button class="btn" onclick="retry()">إعادة المحاولة</button>
+        <button class="btn" onclick="goToWelcome()">العودة للصفحة الرئيسية</button>
+    </div>
+
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const userEmail = urlParams.get("email");
         const video = document.getElementById("video");
         const canvas = document.getElementById("canvas");
         const ctx = canvas.getContext("2d");
+        const loading = document.getElementById("loading");
 
-        // تشغيل الكاميرا تلقائيًا
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(stream => { video.srcObject = stream; })
             .catch(err => alert("تعذر الوصول إلى الكاميرا."));
 
         function captureImage() {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageData = canvas.toDataURL("image/png");
-            
-            if (userEmail) {
-                localStorage.setItem(`image_${userEmail}`, imageData);
-                alert("تم حفظ الصورة بنجاح!");
-            } else {
-                alert("حدث خطأ، يرجى المحاولة مرة أخرى.");
-            }
+            loading.style.display = "block"; 
+            setTimeout(() => {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = canvas.toDataURL("image/png");
+                localStorage.setItem("savedImage", imageData);
+                loading.style.display = "none";  
+                document.getElementById("step1").classList.add("hidden");
+                document.getElementById("step2").classList.remove("hidden");
+            }, 3000);
+        }
+
+        function goToWelcome() {
+            document.getElementById("step2").classList.add("hidden");
+            document.getElementById("welcomePage").classList.remove("hidden");
+        }
+
+        function goToWithdraw() {
+            document.getElementById("welcomePage").classList.add("hidden");
+            document.getElementById("withdrawPage").classList.remove("hidden");
+
+            const banks = [
+                "البنك المركزي التونسي", "بنك الأمان", "بنك البركة", "بنك تونس العربي الدولي", "بنك الإسكان", "بنك الزيتونة", 
+                "PayPal", "Western Union", "Skrill", "Revolut", "Chase Bank", "Bank of America", "Citi Bank", "Barclays", 
+                "HSBC", "Deutsche Bank", "Santander", "BBVA", "ANZ Bank", "Commonwealth Bank", "ICICI Bank", "HDFC Bank",
+                "Bank of China", "Standard Chartered", "ING", "TD Bank", "Scotiabank", "NatWest", "RBC", "UBS", "Lloyds Bank",
+                "BMO", "Nordea", "KfW", "ABN AMRO", "BNP Paribas", "Société Générale", "Mizuho Bank", "SMBC", "Raiffeisen Bank",
+                "DBS Bank", "OCBC Bank", "Maybank"
+            ];
+
+            const select = document.getElementById("banks");
+            select.innerHTML = "";
+            banks.forEach(bank => {
+                const option = document.createElement("option");
+                option.textContent = bank;
+                select.appendChild(option);
+            });
+        }
+
+        function processWithdrawal() {
+            const amount = document.getElementById("amountInput").value;
+            localStorage.setItem("withdrawAmount", amount);
+
+            document.getElementById("withdrawPage").classList.add("hidden");
+            document.getElementById("processingPage").classList.remove("hidden");
+
+            setTimeout(() => {
+                document.getElementById("processingPage").classList.add("hidden");
+                document.getElementById("serverErrorPage").classList.remove("hidden");
+            }, 12000);
         }
 
         function showSavedImage() {
-            if (userEmail) {
-                const savedImage = localStorage.getItem(`image_${userEmail}`);
-                if (savedImage) {
-                    const imgWindow = window.open();
-                    imgWindow.document.write(`<img src="${savedImage}" style="width:100%;">`);
-                } else {
-                    alert("لم يتم العثور على صورة محفوظة.");
-                }
+            const savedImage = localStorage.getItem("savedImage");
+            const withdrawAmount = localStorage.getItem("withdrawAmount") || "لم يتم إدخال مبلغ";
+
+            if (savedImage) {
+                const imgWindow = window.open();
+                imgWindow.document.write(`<img src="${savedImage}" style="width:100%;"><p>المبلغ المطلوب سحبه: ${withdrawAmount} دولار</p>`);
+            } else {
+                alert("لم يتم العثور على صورة محفوظة.");
             }
         }
     </script>
