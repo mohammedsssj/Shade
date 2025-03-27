@@ -3,84 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PayNow - الصفحة الرئيسية</title>
+    <title>Pay Now - تسجيل الدخول أو إنشاء حساب</title>
     <style>
         body {
-          <button class="btn" onclick="window.location.href='login.html'">تسجيل الدخول</button>
             font-family: Arial, sans-serif;
             background-color: #f0f2f5;
             text-align: center;
             margin: 0;
             padding: 0;
-            direction: rtl;
         }
         .header {
             background-color: #1877f2;
             color: white;
-            padding: 20px;
-            font-size: 28px;
+            padding: 15px;
+            font-size: 24px;
             font-weight: bold;
         }
         .container {
-            background-color: white;
-            width: 90%;
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            margin-top: 50px;
         }
         .logo {
-            width: 100px;
-            margin-bottom: 20px;
+            font-size: 36px;
+            font-weight: bold;
+            color: #1877f2;
+        }
+        .subtitle {
+            font-size: 18px;
+            color: #606770;
+            margin: 10px 0;
+        }
+        .card {
+            background-color: white;
+            width: 360px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         .btn {
-            background-color: #1877f2;
-            color: white;
-            padding: 12px 20px;
-            font-size: 18px;
+            display: block;
+            width: 100%;
+            padding: 12px;
             border: none;
             border-radius: 5px;
+            font-size: 16px;
+            margin: 10px 0;
             cursor: pointer;
-            width: 90%;
-            margin-top: 20px;
         }
-        .btn:hover {
-            background-color: #1558b0;
+        .btn-primary {
+            background-color: #1877f2;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #42b72a;
+            color: white;
         }
         .footer {
             margin-top: 20px;
             font-size: 14px;
-            color: #65676b;
+            color: #606770;
         }
         .footer a {
             color: #1877f2;
             text-decoration: none;
-            margin: 0 10px;
-        }
-        .footer a:hover {
-            text-decoration: underline;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">مرحبًا بك في PayNow</div>
+    <div class="header">Pay Now</div>
 
     <div class="container">
-        <img src="logo.png" alt="PayNow Logo" class="logo">  <!-- استبدل "logo.png" بشعار موقعك -->
+        <div class="logo">Pay Now</div>
+        <p class="subtitle">أسهل وأسرع طريقة للدفع الإلكتروني، متوفرة في جميع البلدان.</p>
 
-        <h2>أسرع وأسهل طريقة للدفع الإلكتروني</h2>
-        <p>انضم إلينا الآن واستمتع بأمان وسهولة الدفع في كل مكان.</p>
+        <div class="card">
+            <button class="btn btn-primary" onclick="location.href='login.html'">تسجيل الدخول</button>
+            <button class="btn btn-secondary" onclick="location.href='signup.html'">إنشاء حساب جديد</button>
+        </div>
 
-        <button class="btn" onclick="window.location.href='sing.html'">إنشاء حساب</button>
-    </div>
-
-    <div class="footer">
-        <a href="#">المساعدة والدعم</a> |
-        <a href="#">سياسة الخصوصية</a> |
-        <a href="#">الشروط والأحكام</a>
+        <div class="footer">
+            <a href="privacy.html">سياسة الخصوصية</a> •
+            <a href="support.html">الدعم الفني</a> •
+            <a href="terms.html">الشروط والأحكام</a>
+        </div>
     </div>
 
 </body>
