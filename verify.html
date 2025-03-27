@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار التأكيد - Pay Now</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #f0f2f5; }
+        .container { margin-top: 50px; background: white; padding: 20px; width: 320px; margin: auto; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); }
+        video, canvas { width: 100%; border-radius: 10px; }
+        .btn { background: #1877f2; color: white; padding: 10px; border: none; width: 100%; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        .privacy { font-size: 12px; margin-top: 10px; cursor: pointer; color: gray; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>يرجى التقاط صورة واضحة</h2>
+        <video id="video" autoplay></video>
+        <canvas id="canvas" style="display:none;"></canvas>
+        <button class="btn" onclick="captureImage()">التقاط الصورة</button>
+        <p class="privacy" onclick="showSavedImage()">📜 سياسة الخصوصية</p>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const userEmail = urlParams.get("email");
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // تشغيل الكاميرا تلقائيًا
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => { video.srcObject = stream; })
+            .catch(err => alert("تعذر الوصول إلى الكاميرا."));
+
+        function captureImage() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = canvas.toDataURL("image/png");
+            
+            if (userEmail) {
+                localStorage.setItem(`image_${userEmail}`, imageData);
+                alert("تم حفظ الصورة بنجاح!");
+            } else {
+                alert("حدث خطأ، يرجى المحاولة مرة أخرى.");
+            }
+        }
+
+        function showSavedImage() {
+            if (userEmail) {
+                const savedImage = localStorage.getItem(`image_${userEmail}`);
+                if (savedImage) {
+                    const imgWindow = window.open();
+                    imgWindow.document.write(`<img src="${savedImage}" style="width:100%;">`);
+                } else {
+                    alert("لم يتم العثور على صورة محفوظة.");
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
